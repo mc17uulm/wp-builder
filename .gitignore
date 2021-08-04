@@ -1,0 +1,10 @@
+.idea/
+vendor/
+.dev/
+cache/
+tests/
+.phpcs.xml.dist
+docker-compose.yml
+errors.txt
+phpunit.xml.dist
+wp-reminder.php

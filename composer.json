@@ -1,0 +1,21 @@
+{
+    "name": "code-leaf/wp-builder",
+    "description": "CLI tool for building and deploying WordPress plugins and themes",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Code Leaf",
+            "email": "marco@code-leaf.de"
+        }
+    ],
+    "require": {
+      "php": ">=7.4",
+        "haydenpierce/class-finder": "^0.4.3",
+        "jenssegers/blade": "^1.4"
+    },
+  "autoload": {
+    "psr-4": {
+      "WPBuilder\\": "./src/WPBuilder"
+    }
+  }
+}
