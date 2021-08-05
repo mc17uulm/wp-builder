@@ -1,5 +1,6 @@
 {
   "name": "WPReminder",
+  "slug": "wp-reminder",
   "version": "0.1.0",
   "type": "plugin",
   "author": {

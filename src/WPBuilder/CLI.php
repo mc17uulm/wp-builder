@@ -4,8 +4,10 @@ namespace WPBuilder;
 
 use HaydenPierce\ClassFinder\ClassFinder;
 use Exception;
+use WPBuilder\programs\Version;
 
 final class CLI {
+
 
     /**
      * @param int $argc
@@ -13,6 +15,7 @@ final class CLI {
      * @throws Exception
      */
     public static function run(int $argc, array $argv) : void {
+        Version::print_header();
         try {
             $config = Config::get();
             Command::init();
@@ -63,6 +66,27 @@ final class CLI {
         }
         $program[0]->handle($argc, $argv);
         die();
+    }
+
+    /**
+     * @param array $argv
+     * @return array
+     */
+    public static function parse_arguments(array $argv) : array {
+        $out = [];
+        foreach($argv as $arg) {
+            if(substr($arg, 0, 2) === "--") {
+                $arg = substr($arg, 2);
+            } else {
+                array_push($out, $arg);
+                break;
+            }
+            $parts = explode("=", $arg);
+            if(count($parts) === 2) {
+                $out[$parts[0]] = $parts[1];
+            }
+        }
+        return $out;
     }
 
 }

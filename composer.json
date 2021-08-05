@@ -10,8 +10,11 @@
     ],
     "require": {
       "php": ">=7.4",
-        "haydenpierce/class-finder": "^0.4.3",
-        "jenssegers/blade": "^1.4"
+      "haydenpierce/class-finder": "^0.4.3",
+      "jenssegers/blade": "^1.4",
+      "ext-json": "*",
+        "myclabs/php-enum": "^1.8",
+        "opis/json-schema": "^1.0"
     },
   "autoload": {
     "psr-4": {

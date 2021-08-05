@@ -2,6 +2,8 @@
 
 namespace WPBuilder\programs;
 
+use WPBuilder\Color;
+use WPBuilder\Command;
 use WPBuilder\Program;
 
 final class Error implements Program
@@ -30,9 +32,13 @@ final class Error implements Program
     }
 
     private function print_error(string $message) : void {
-        (new Version())->handle();
         echo "\n";
-        echo "ERROR: $message\n";
+        Command::write("ERROR: $message", Color::RED());
+        die();
+    }
+
+    public static function error(string $message) : void {
+        (new Error())->handle(1, [$message]);
     }
 
 }

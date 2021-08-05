@@ -13,8 +13,6 @@ final class Command
 
     public static function init() : void {
         ini_set('output_buffering', 'off');
-        // Turn off PHP output compression
-        ini_set('zlib.output_compression', false);
         // Implicitly flush the buffer(s)
         ini_set('implicit_flush', true);
         ob_implicit_flush(true);
@@ -34,22 +32,51 @@ final class Command
         }
     }
 
-    public static function exec(array $cmd) : void {
-        flush();
-        $process = proc_open($cmd, self::DESCRIPTOR_SPEC, $pipes, realpath(getcwd()), [], ['bypass_shell' => true]);
+    public static function exec(string $cmd, array $args = [], bool $silent = false) : int {
+        $process_cmd = '"' . $cmd . '" ' . self::parse_args(new Collection($args));
+        $process = proc_open($process_cmd, self::DESCRIPTOR_SPEC, $pipes, null, null, ['bypass_shell' => true]);
         if(is_resource($process)) {
             while($s = fgets($pipes[1])) {
-                print $s;
-                flush();
+                if(!$silent) print $s;
             }
-        } else {
-            echo "no resource\n";
+            if(!$silent) echo stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            return proc_close($process);
         }
+        return -1;
+    }
+
+    public static function readline() : string {
+        $handle = fopen("php://stdin", 'r');
+        $response = fgets($handle);
+        fclose($handle);
+        return trim($response);
+    }
+
+    public static function writeline(string $text, Color $color = null) : void {
+        self::write("$text\n", $color);
+    }
+
+    public static function write(string $text, Color $color = null) : void {
+        if($color === null) $color = Color::DEFAULT();
+        echo "$color$text";
+    }
+
+    private static function parse_args(Collection $args) : string {
+        return $args
+            ->map(function(string $arg, $key) : string {
+                return is_string($key) ?
+                    ' ' . escapeshellarg($key) . ' ' . escapeshellarg($arg) :
+                    ' ' . escapeshellarg($arg);
+            })
+            ->reduce(function(string $carry, string $item) : string {
+                return $carry . $item;
+            }, "");
     }
 
     public static function del_dir(string $dirname) : void {
-        self::exec([
-            'rm',
+        self::exec('rm', [
             '-rf',
             $dirname
         ]);
@@ -68,6 +95,10 @@ final class Command
             case "windows": return "bash.exe";
             default: return "bash";
         }
+    }
+
+    public static function format_file(string $filepath) : string {
+        return preg_replace('/\\\\/','\\\\\\\\',realpath($filepath));
     }
 
 }
