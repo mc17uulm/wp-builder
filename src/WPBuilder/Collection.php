@@ -104,6 +104,14 @@ class Collection
 
     /**
      * @param callable $callable
+     */
+    public function walk(callable $callable) : void {
+        $list = $this->list;
+        array_walk($list, $callable);
+    }
+
+    /**
+     * @param callable $callable
      * @return Collection
      */
     public function filter(callable $callable) : Collection

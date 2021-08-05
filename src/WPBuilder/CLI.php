@@ -18,7 +18,6 @@ final class CLI {
         Version::print_header();
         try {
             $config = Config::get();
-            Command::init();
             array_shift($argv);
             if($argc < 2) self::load_help($argv);
             $name = array_shift($argv);

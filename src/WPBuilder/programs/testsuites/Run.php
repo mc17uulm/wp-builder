@@ -1,13 +1,12 @@
 <?php
 
-namespace WPBuilder\programs;
+namespace WPBuilder\programs\testsuites;
 
 use WPBuilder\Color;
 use WPBuilder\Command;
 use WPBuilder\Program;
 
-final class Test implements Program
-{
+final class Run implements Program {
 
     public function get_name(): string
     {

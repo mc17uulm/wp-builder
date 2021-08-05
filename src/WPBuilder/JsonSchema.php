@@ -28,16 +28,10 @@ class JsonSchema
 
     /**
      * JsonSchema constructor.
-     * @param string $filename
-     * @param string $base
      * @throws BuilderException
      */
-    public function __construct(string $filename = "", string $base = "") {
-        if($base === "" && defined("WP_REMINDER_SCHEMAS")) {
-            $base = WP_REMINDER_SCHEMAS;
-        }
-
-        $file = "$base$filename";
+    public function __construct() {
+        $file = WP_BUILDER_SCHEMA_FILE;
         if(!file_exists($file)) throw new BuilderException("File does not exist");
         if(!is_readable($file)) throw new BuilderException("Cannot read schema file");
 

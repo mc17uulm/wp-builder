@@ -44,7 +44,7 @@ final class Start implements Program
             return;
         }
         Command::writeline("… Starting docker containers", Color::YELLOW());
-        Command::exec('docker-compose', ['up', '-d']);
+        Command::exec('docker-compose up -d', false);
         Command::write("✓ Testsuite is now live", Color::GREEN());
     }
 

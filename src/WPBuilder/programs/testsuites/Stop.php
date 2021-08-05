@@ -45,7 +45,7 @@ final class Stop implements Program
             return;
         }
         Command::writeline("… Stopping docker containers", Color::YELLOW());
-        Command::exec('docker-compose', ['down']);
+        Command::exec('docker-compose down', false);
         Command::write("✓ Testsuite stopped", Color::GREEN());
     }
 

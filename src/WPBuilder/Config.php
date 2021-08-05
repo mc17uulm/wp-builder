@@ -2,8 +2,6 @@
 
 namespace WPBuilder;
 
-use JsonException;
-
 /**
  *
  */
@@ -26,12 +24,9 @@ final class Config
         if(!is_readable($config_file)) throw new BuilderException('config file not readable');
         if(!is_writable($config_file)) throw new BuilderException('config file is not writeable');
 
-        $content = file_get_contents($config_file);
-        try {
-            $this->config = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw new BuilderException($e->getMessage());
-        }
+        $this->config = (new JsonSchema())
+            ->validate(file_get_contents($config_file))
+            ->get_result();
     }
 
     /**

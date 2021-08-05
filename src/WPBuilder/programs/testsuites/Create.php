@@ -8,7 +8,6 @@ use WPBuilder\Color;
 use WPBuilder\Command;
 use WPBuilder\Config;
 use WPBuilder\Program;
-use WPBuilder\programs\Version;
 use WPBuilder\BuilderException;
 
 /**
@@ -120,7 +119,7 @@ final class Create implements Program
         BladeHandler::save(WP_BUILDER_CWD . '/tests/bootstrap.php', 'bootstrap', ['slug' => $slug]);
         Command::writeline("✓ Created ./tests/bootstrap.php", Color::GREEN());
         Command::writeline("… Installing test suite", Color::YELLOW());
-        Command::exec('sh', ['./.dev/docker/install-wp-test-suite.sh'], true);
+        Command::exec('sh ./.dev/docker/install-wp-test-suite.sh');
         Command::write("✓ WP test suite installed", Color::GREEN());
     }
 

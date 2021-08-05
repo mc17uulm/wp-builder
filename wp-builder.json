@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "type": "plugin",
   "author": {
-    "name": "CodeLeaf"
+    "name": "CodeLeaf",
+    "email": "plugins@code-leaf.de"
   },
   "build": {
     "includes": [

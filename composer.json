@@ -13,12 +13,15 @@
       "haydenpierce/class-finder": "^0.4.3",
       "jenssegers/blade": "^1.4",
       "ext-json": "*",
-        "myclabs/php-enum": "^1.8",
-        "opis/json-schema": "^1.0"
+      "myclabs/php-enum": "^1.8",
+      "opis/json-schema": "^1.0"
     },
   "autoload": {
     "psr-4": {
       "WPBuilder\\": "./src/WPBuilder"
     }
-  }
+  },
+    "require-dev": {
+        "clue/phar-composer": "^1.2"
+    }
 }

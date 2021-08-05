@@ -8,3 +8,4 @@ docker-compose.yml
 errors.txt
 phpunit.xml.dist
 wp-reminder.php
+wp-builder.phar
