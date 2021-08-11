@@ -19,7 +19,7 @@ final class Config
      * @throws BuilderException
      */
     protected function __construct() {
-        $config_file = WP_BUILDER_CWD . "\wp-builder.json";
+        $config_file = Path::create_dir_path('wp-builder.json')->get_path();
         if(!file_exists($config_file)) throw new BuilderException('needing wp-builder.json file');
         if(!is_readable($config_file)) throw new BuilderException('config file not readable');
         if(!is_writable($config_file)) throw new BuilderException('config file is not writeable');
