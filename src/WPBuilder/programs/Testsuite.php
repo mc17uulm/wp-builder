@@ -5,6 +5,7 @@ namespace WPBuilder\programs;
 use WPBuilder\BuilderException;
 use WPBuilder\Program;
 use WPBuilder\programs\testsuites\Create;
+use WPBuilder\programs\testsuites\Run;
 use WPBuilder\programs\testsuites\Start;
 use WPBuilder\programs\testsuites\Stop;
 
@@ -52,6 +53,8 @@ final class Testsuite implements Program
             case 'start': (new Start())->handle(count($argv), $argv);
                 break;
             case 'stop': (new Stop())->handle(count($argv), $argv);
+                break;
+            case 'run': (new Run())->handle(count($argv), $argv);
                 break;
             default: Error::error("Unknown program '$program'");
         }

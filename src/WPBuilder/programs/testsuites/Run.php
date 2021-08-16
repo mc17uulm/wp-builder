@@ -10,23 +10,23 @@ final class Run implements Program {
 
     public function get_name(): string
     {
-        return 'Test';
+        return 'Run';
     }
 
     public function get_identifier(): string
     {
-        return 'test';
+        return 'run';
     }
 
     public function get_description(): string
     {
-        return 'For development';
+        return 'Run phpunit test environment in docker container';
     }
 
     public function handle(int $argc, array $argv): void
     {
-        Command::exec('composer');
-        Command::writeline("Hallo", Color::MAGENTA());
+        Command::writeline('Executing phpunit test environment in docker container', Color::MAGENTA());
+        Command::exec('docker exec -it wordpress_test sh -c "cd /var/www/html/wp-content/plugins/wp-reminder && phpunit"', false);
     }
 
 }

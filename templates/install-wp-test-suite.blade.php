@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 WP_VERSION=latest
-WP_TESTS_DIR={{ $dir }}/tests/lib
+WP_TESTS_DIR="{{ $dir }}"
+WP_DIR_SEPARATOR="{{ $separator }}"
 WP_CORE_DIR=/var/www/html
 
 echo "running"
@@ -52,27 +53,27 @@ install_test_suite() {
     fi
 
     # set up testing suite if it doesn't yet exist
-    if [ ! -d $WP_TESTS_DIR ]; then
+    if [ ! -d "$WP_TESTS_DIR" ]; then
         echo "svn"
         # set up testing suite
         mkdir -p $WP_TESTS_DIR
-        rm -rf $WP_TESTS_DIR/{includes,data}
-        svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
-        svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
+        rm -rf $WP_TESTS_DIR$WP_DIR_SEPARATOR{includes,data}
+        svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ "$WP_TESTS_DIR$WP_DIR_SEPARATOR"includes
+        svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ "$WP_TESTS_DIR$WP_DIR_SEPARATOR"data
     else
         echo "no svn"
     fi
 
     if [ ! -f wp-tests-config.php ]; then
-        download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
+        download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR$WP_DIR_SEPARATOR"wp-tests-config.php
         # remove all forward slashes in the end
         WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
-        sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
-        sed $ioption "s:__DIR__ . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
-        sed $ioption "s/youremptytestdbnamehere/{{ $mysql_database }}/" "$WP_TESTS_DIR"/wp-tests-config.php
-        sed $ioption "s/yourusernamehere/{{ $mysql_user }}/" "$WP_TESTS_DIR"/wp-tests-config.php
-        sed $ioption "s/yourpasswordhere/{{ $mysql_password }}/" "$WP_TESTS_DIR"/wp-tests-config.php
-        sed $ioption "s|localhost|db:3306|" "$WP_TESTS_DIR"/wp-tests-config.php
+        sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR$WP_DIR_SEPARATOR"wp-tests-config.php
+        sed $ioption "s:__DIR__ . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR$WP_DIR_SEPARATOR"wp-tests-config.php
+        sed $ioption "s/youremptytestdbnamehere/{{ $mysql_database }}/" "$WP_TESTS_DIR$WP_DIR_SEPARATOR"wp-tests-config.php
+        sed $ioption "s/yourusernamehere/{{ $mysql_user }}/" "$WP_TESTS_DIR$WP_DIR_SEPARATOR"wp-tests-config.php
+        sed $ioption "s/yourpasswordhere/{{ $mysql_password }}/" "$WP_TESTS_DIR$WP_DIR_SEPARATOR"wp-tests-config.php
+        sed $ioption "s|localhost|db:3306|" "$WP_TESTS_DIR$WP_DIR_SEPARATOR"wp-tests-config.php
     fi
 
 }

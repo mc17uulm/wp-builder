@@ -11,8 +11,8 @@
     "includes": [
       "dist/fonts",
       "dist/css",
-      "dist/js/*.js",
-      "dist/js/*.php",
+      {"dist/js/*.js": "dist/js"},
+      {"dist/js/*.php": "dist/js"},
       "languages",
       "plugin",
       "schemas",

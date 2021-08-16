@@ -11,7 +11,7 @@ final class BladeHandler
 
     public static function get(): Blade {
         if(self::$instance === null) {
-            self::$instance = new Blade('templates', 'cache');
+            self::$instance = new Blade(WP_BUILDER_DIR . '/templates', WP_BUILDER_DIR . '/cache');
         }
         return self::$instance;
     }

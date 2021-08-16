@@ -7,6 +7,7 @@ use WPBuilder\Collection;
 use WPBuilder\Color;
 use WPBuilder\Command;
 use WPBuilder\Config;
+use WPBuilder\Path;
 use WPBuilder\Program;
 
 final class Build implements Program
@@ -41,7 +42,7 @@ final class Build implements Program
         $slug = $config->load("slug");
         Command::writeline("✓ Found slug: '$slug'", Color::GREEN());
         $build = $config->load("build");
-        $includes = new Collection($build["includes"]);
+        $includes = self::parse_includes(new Collection($build["includes"]));
         if(in_array('package.json', $files)) {
             if(!in_array('node_modules', $files)) {
                 Command::writeline("… yarn install", Color::YELLOW());
@@ -55,33 +56,18 @@ final class Build implements Program
         $composer = in_array('composer.json', $files);
 
         $zip = "$slug.zip";
-        if(file_exists(WP_BUILDER_CWD . "/$zip")) {
-            unlink(WP_BUILDER_CWD . "/$zip");
+        $zip_path = Path::create_dir_path($zip);
+        if(file_exists($zip_path->get_path())) {
+            unlink($zip_path->get_path());
         }
-        mkdir(WP_BUILDER_CWD . '/.build');
+
+        $build_path = Path::create_dir_path('.build');
+        mkdir($build_path->get_path());
+
 
         $includes
-            ->map(function(string $file) {
-                $path = $file;
-                if(($pos = strpos($file, "*")) !== false) {
-                    $path = substr($file, 0, $pos - 1);
-                }
-                if(!file_exists(dirname(WP_BUILDER_CWD . "/$file"))) {
-                    throw new BuilderException("Includes file(s) '" . WP_BUILDER_CWD . "/$file' do not exist");
-                }
-                // TODO: creates subdir for first row dir in includes
-                if(is_dir(WP_BUILDER_CWD . "/$path")) {
-                    // TODO: check of update with mkdir() --recursive mode
-                    Command::exec('mkdir '. str_replace('/', '\\', ".build/$path"));
-                }
-                return [
-                    "name" => $file,
-                    "from" => WP_BUILDER_CWD . "/$file",
-                    "to" => WP_BUILDER_CWD . "/.build/$path"
-                ];
-            })
             ->walk(function(array $files) {
-                Command::writeline("… copy " . $files['name'], Color::YELLOW());
+                Command::writeline("… copy " . $files['from'], Color::YELLOW());
                 Command::exec('cp -r ' . $files['from'] . " " . $files['to'], true);
                 Command::writeline("✓ Finished copy", Color::GREEN());
             });
@@ -96,6 +82,29 @@ final class Build implements Program
         Command::del_dir(WP_BUILDER_CWD . '/.build');
         Command::writeline("✓ Removed tmp build files", Color::GREEN());
         Command::write("✓ Bundled plugin successfully", Color::GREEN());
+    }
+
+    private static function parse_includes(Collection $includes) : Collection {
+        return $includes->map(function($elem) {
+           if(is_string($elem)) {
+               return [
+                   'from' => Path::create_dir_path($elem),
+                   'to' => Path::create_dir_path($elem)
+               ];
+           } elseif(
+               is_array($elem) &&
+               (count($elem) === 1) &&
+               is_string(array_keys($elem)[0])
+           ) {
+               $key = array_keys($elem)[0];
+               return [
+                   'from' => Path::create_dir_path($key),
+                   'to' => Path::create_dir_path($elem[$key])
+               ];
+           } else {
+               throw new BuilderException("Invalid element type");
+           }
+        });
     }
 
 }

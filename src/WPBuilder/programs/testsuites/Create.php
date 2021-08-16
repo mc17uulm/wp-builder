@@ -7,6 +7,7 @@ use WPBuilder\CLI;
 use WPBuilder\Color;
 use WPBuilder\Command;
 use WPBuilder\Config;
+use WPBuilder\Path;
 use WPBuilder\Program;
 use WPBuilder\BuilderException;
 
@@ -94,7 +95,7 @@ final class Create implements Program
                 Command::del_dir(WP_BUILDER_CWD . "/tests/bootstrap.php");
             }
         } else {
-            mkdir(WP_BUILDER_CWD . "/tests");
+            mkdir(WP_BUILDER_CWD . "/tests/lib");
             Command::writeline("✓ Created ./tests", Color::GREEN());
         }
 
@@ -105,7 +106,8 @@ final class Create implements Program
             'mysql_user' => $arguments['db_user'],
             'mysql_database' => $arguments['db_name'],
             'slug' => $slug,
-            'dir' => preg_replace('/\\\\/','\\\\\\\\',WP_BUILDER_CWD)
+            'dir' => Path::create_dir_path('tests\\lib')->get_path(),
+            'separator' => Path::get_separator()
         ];
 
         BladeHandler::save(WP_BUILDER_CWD . "/docker-compose.yml", 'docker-compose', $params);
@@ -119,7 +121,7 @@ final class Create implements Program
         BladeHandler::save(WP_BUILDER_CWD . '/tests/bootstrap.php', 'bootstrap', ['slug' => $slug]);
         Command::writeline("✓ Created ./tests/bootstrap.php", Color::GREEN());
         Command::writeline("… Installing test suite", Color::YELLOW());
-        Command::exec('sh ./.dev/docker/install-wp-test-suite.sh');
+        Command::exec('sh ./.dev/docker/install-wp-test-suite.sh', false);
         Command::write("✓ WP test suite installed", Color::GREEN());
     }
 
