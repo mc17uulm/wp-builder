@@ -26,12 +26,12 @@ use MyCLabs\Enum\Enum;
 final class Color extends Enum
 {
 
-    private const DEFAULT = "\033[39m";
-    private const BLACK = "\033[30m";
-    private const RED = "\033[31m";
-    private const GREEN = "\033[32m";
-    private const YELLOW = "\033[33m";
-    private const BLUE = "\033[34m";
+    private const DEFAULT = "\033[0;39m";
+    private const BLACK = "\033[0;30m";
+    private const RED = "\033[0;31m";
+    private const GREEN = "\033[0;32m";
+    private const YELLOW = "\033[0;33m";
+    private const BLUE = "\033[0;34m";
     private const MAGENTA = "\033[35m";
     private const CYAN = "\033[36m";
     private const LIGHT_GREY = "\033[37m";

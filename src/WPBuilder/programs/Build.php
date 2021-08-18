@@ -2,11 +2,13 @@
 
 namespace WPBuilder\programs;
 
+use Opis\JsonSchema\Loaders\File;
 use WPBuilder\BuilderException;
 use WPBuilder\Collection;
 use WPBuilder\Color;
 use WPBuilder\Command;
 use WPBuilder\Config;
+use WPBuilder\FileHandler;
 use WPBuilder\Path;
 use WPBuilder\Program;
 
@@ -36,13 +38,15 @@ final class Build implements Program
     public function handle(int $argc = 0, array $argv = []): void
     {
         $config = Config::get();
-        Command::writeline("\nBuild .zip", Color::BLUE());
-        Command::exec('rm -rf .build');
+        $file_handler = new FileHandler();
+        Command::writeline("\nBuild .zip");
+        $file_handler->remove_file('.build');
+        Command::writeline("next", Color::MAGENTA());
         $files = scandir(WP_BUILDER_CWD);
         $slug = $config->load("slug");
-        Command::writeline("✓ Found slug: '$slug'", Color::GREEN());
+        Command::writeline("✓ Found slug");
         $build = $config->load("build");
-        $includes = self::parse_includes(new Collection($build["includes"]));
+        $includes = new Collection($build["includes"]);
         if(in_array('package.json', $files)) {
             if(!in_array('node_modules', $files)) {
                 Command::writeline("… yarn install", Color::YELLOW());
@@ -50,7 +54,7 @@ final class Build implements Program
                 Command::writeline("✓ Installed node_modules", Color::GREEN());
             }
             Command::writeline("… yarn build", Color::YELLOW());
-            Command::exec('yarn build');
+            Command::exec('yarn build', false);
             Command::writeline("✓ Build yarn bundle", Color::GREEN());
         }
         $composer = in_array('composer.json', $files);
@@ -64,22 +68,22 @@ final class Build implements Program
         $build_path = Path::create_dir_path('.build');
         mkdir($build_path->get_path());
 
-
         $includes
-            ->walk(function(array $files) {
-                Command::writeline("… copy " . $files['from'], Color::YELLOW());
-                Command::exec('cp -r ' . $files['from'] . " " . $files['to'], true);
+            ->walk(function(string $file) use ($file_handler) {
+                Command::writeline("… copy $file", Color::YELLOW());
+                $file_handler->copy($file, '.build');
                 Command::writeline("✓ Finished copy", Color::GREEN());
             });
+
         if($composer) {
             Command::writeline("… composer install", Color::YELLOW());
-            Command::exec('cd .build && composer install --no-ansi --no-dev --no-interaction --no-plugins --no-scripts --optimize-autoloader --prefer-dist --no-suggest');
+            Command::exec("composer install --no-ansi --no-dev --no-interaction --no-plugins --no-scripts --optimize-autoloader --prefer-dist --no-suggest --working-dir=.build");
             Command::writeline("✓ Installed composer dependencies", Color::GREEN());
         }
         Command::writeline("… zip files", Color::YELLOW());
-        Command::exec("cd .build && zip -qqr ../$zip *");
+        Command::exec("cd .build; zip -qqr ./../$zip *", false);
         Command::writeline("✓ Build $zip", Color::GREEN());
-        Command::del_dir(WP_BUILDER_CWD . '/.build');
+        Command::exec('rm -rf .build');
         Command::writeline("✓ Removed tmp build files", Color::GREEN());
         Command::write("✓ Bundled plugin successfully", Color::GREEN());
     }
@@ -87,9 +91,12 @@ final class Build implements Program
     private static function parse_includes(Collection $includes) : Collection {
         return $includes->map(function($elem) {
            if(is_string($elem)) {
+               $from = Path::create_dir_path($elem);
+               $to = Path::create_dir_path(".build", ...explode("/", $elem));
                return [
-                   'from' => Path::create_dir_path($elem),
-                   'to' => Path::create_dir_path($elem)
+                   'from' => $from,
+                   'to' => $to,
+                   'create' => null
                ];
            } elseif(
                is_array($elem) &&
@@ -97,9 +104,12 @@ final class Build implements Program
                is_string(array_keys($elem)[0])
            ) {
                $key = array_keys($elem)[0];
+               $from = Path::create_dir_path($key);
+               $to = Path::create_dir_path(".build", ...explode("/", $elem[$key]));
                return [
-                   'from' => Path::create_dir_path($key),
-                   'to' => Path::create_dir_path($elem[$key])
+                   'from' => $from,
+                   'to' => $to,
+                   'create' => $to
                ];
            } else {
                throw new BuilderException("Invalid element type");

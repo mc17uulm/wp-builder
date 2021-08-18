@@ -35,18 +35,7 @@
         "includes": {
           "type": "array",
           "items": {
-            "oneOf": [
-              {
-                "type": "string"
-              }, {
-                "type": "object",
-                "patternProperties": {
-                  ".{1,}": {
-                    "type": "string"
-                  }
-                }
-              }
-            ]
+            "type": "string"
           }
         }
       },

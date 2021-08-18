@@ -1,11 +1,13 @@
 .idea/
 vendor/
 .dev/
+.build/
 cache/
 tests/
 .phpcs.xml.dist
 docker-compose.yml
 errors.txt
 phpunit.xml.dist
+test.php
 wp-reminder.php
 wp-builder.phar
