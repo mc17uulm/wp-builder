@@ -15,12 +15,16 @@
       "myclabs/php-enum": "^1.8",
       "opis/json-schema": "^1.0"
     },
+  "scripts": {
+    "analyse": "./vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan.neon"
+  },
   "autoload": {
     "psr-4": {
       "WPBuilder\\": "./src/WPBuilder"
     }
   },
     "require-dev": {
-        "clue/phar-composer": "^1.2"
+        "clue/phar-composer": "^1.2",
+        "phpstan/phpstan": "^0.12.94"
     }
 }

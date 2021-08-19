@@ -58,6 +58,37 @@ final class Command
     }
 
     /**
+     * @param array $commands
+     * @return array
+     */
+    public static function collect_data(array $commands) : array {
+        $out = [];
+        foreach($commands as $key => $command) {
+            Command::write($command);
+            $out[$key] = Command::readline();
+        }
+        return $out;
+    }
+
+    /**
+     * @param string $question
+     * @return string
+     */
+    public static function ask(string $question) : string {
+        Command::write($question);
+        return Command::readline();
+    }
+
+    /**
+     * @param string $question
+     * @return bool
+     */
+    public static function ask_yn_question(string $question) : bool {
+        Command::write($question);
+        return in_array(strtolower(Command::readline()), ['y', 'yes']);
+    }
+
+    /**
      * View any string as a hexdump.
      *
      * This is most commonly used to view binary data from streams

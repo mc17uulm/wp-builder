@@ -5,6 +5,10 @@ namespace WPBuilder;
 final class FileHandler
 {
 
+    /**
+     * @param string $path
+     * @return string
+     */
     public function transform_path(string $path) : string {
         return str_replace(["/", "\\"], '/', $path);
     }

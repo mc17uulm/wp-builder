@@ -17,7 +17,11 @@ final class Path
      * @param ...$parts
      */
     protected function __construct(... $parts) {
-        $this->path = str_replace(['/', '\\'], '\\\\', join(DIRECTORY_SEPARATOR, $parts));
+        $path = join(DIRECTORY_SEPARATOR, $parts);
+        if(PHP_OS === "WINNT") {
+            $path = str_replace(['/', '\\'], '\\\\', $path);
+        }
+        $this->path = $path;
     }
 
     /**

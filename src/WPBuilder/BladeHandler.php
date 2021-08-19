@@ -12,6 +12,15 @@ final class BladeHandler
     public static function get(): Blade {
         if(self::$instance === null) {
             self::$instance = new Blade(WP_BUILDER_DIR . '/templates', WP_BUILDER_DIR . '/cache');
+            self::$instance->directive('year', function() {
+                return date('Y');
+            });
+            self::$instance->directive('date', function() {
+                return date('d.m.Y');
+            });
+            self::$instance->directive('uppercase', function($name) {
+                return str_replace(' ', '_', strtoupper($name));
+            });
         }
         return self::$instance;
     }
