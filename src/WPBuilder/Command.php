@@ -18,7 +18,7 @@ final class Command
      */
     public static function exec(string $cmd, bool $silent = true): string
     {
-        $process = proc_open("sh -c '$cmd'", self::DESCRIPTORS, $pipes);
+        $process = proc_open("sh -c '$cmd 2>&1'", self::DESCRIPTORS, $pipes);
         $return = "";
         if(is_resource($process)) {
             while($s = fgets($pipes[1])) {
@@ -77,6 +77,16 @@ final class Command
     public static function ask(string $question) : string {
         Command::write($question);
         return Command::readline();
+    }
+
+    /**
+     * @param string $question
+     * @param string $default
+     * @return string
+     */
+    public static function ask_default(string $question, string $default) : string {
+        $result = self::ask($question);
+        return ($result === "") ? $default : $result;
     }
 
     /**

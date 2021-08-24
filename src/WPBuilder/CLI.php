@@ -16,7 +16,6 @@ final class CLI {
     public static function run(int $argc, array $argv) : void {
         Version::print_header();
         try {
-            Config::get();
             array_shift($argv);
             if($argc < 2) self::load_help($argv);
             $name = array_shift($argv);

@@ -81,4 +81,14 @@ final class FileHandler
         Command::exec("rm -rf $file", false);
     }
 
+    public function mkdir(string $path) : void {
+        Command::exec("mkdir $path");
+    }
+
+    public function mkdirs(array $dirs) : void {
+        array_map(function(string $dir) {
+            $this->mkdir($this->append_path($dir));
+        }, $dirs);
+    }
+
 }
