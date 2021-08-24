@@ -160,11 +160,7 @@ final class Plugin implements Program
             return;
         }
         // Create plugin dir and check if successful
-        Command::exec("mkdir $path");
-        if(!file_exists($path) || !is_dir($path)) {
-            Command::write('Could not build path. Abort!', Color::RED());
-            return;
-        }
+        Command::exec("mkdir $path", false);
 
         // change cwd to $path
         chdir($path);
